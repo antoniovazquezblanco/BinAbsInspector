@@ -92,12 +92,6 @@ tasks.withType(Test) {
 	finalizedBy jacocoTestReport
 }
 
-tasks.withType(JavaCompile).configureEach {
-	options.compilerArgs.add("-Xlint:unchecked")
-	options.compilerArgs.add("-Xlint:deprecation")
-	options.warnings = false
-}
-
 javadoc {
 	exclude "**/ConfigDialog.java"
 	exclude "**/BinAbsInpsector.java"

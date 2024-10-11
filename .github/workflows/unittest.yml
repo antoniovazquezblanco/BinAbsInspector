@@ -11,15 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
+      - name: Install Gradle
+        uses: gradle/actions/setup-gradle@v4
       - name: Setup Ghidra
         uses: antoniovazquezblanco/setup-ghidra@v2.0.3
         with:
-          version: '10.4'
+          version: '11.2'
       - uses: actions/cache@v3
         id: cache
         with:
@@ -40,8 +42,12 @@ jobs:
         run: |
           cp $CPATH/../bin/com.microsoft.z3.jar $GITHUB_WORKSPACE/lib/com.microsoft.z3.jar
           sudo cp $CPATH/../bin/*.so  /lib
-      - name: Unit test
-        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
+      - name: Build extension
+        run: gradle buildExtension --info --stacktrace
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          gradle-version: 7.4
-          arguments: test
+          name: BinAbsInspector
+          path: dist/*.zip
+      - name: Unit test
+        run: gradle test
